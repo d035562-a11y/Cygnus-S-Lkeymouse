@@ -7,17 +7,15 @@
 #define NUM     1
 #define SYM     2
 #define MOUSE   4
-#define BT_LYR  6
 
 &mt {
     flavor = "balanced";
     tapping-term-ms = <200>;
-    quick-tap-ms = <0>;
 };
 
 / {
     behaviors {
-        /* 左親指・中：1タップ(左クリ) / 長押し(Ctrl) / 2タップホールド(ドラッグ) */
+        /* 左親指・中央：1タップ(左クリ) / 長押し(Ctrl) / 2タップホールド(ドラッグ) */
         td_ctrl_click: td_ctrl_click {
             compatible = "zmk,behavior-tap-dance";
             #binding-cells = <0>;
@@ -25,27 +23,21 @@
             bindings = <&mt LCTRL MB1>, <&mkp MB1>;
         };
 
-        /* 左親指・内：1タップ(Tab) / 長押し(Shift) / 2タップ(SYMレイヤー固定) */
+        /* 左親指・内側：1タップ(Tab) / 長押し(Shift) / 2タップ(SYMレイヤー固定) */
         td_inner_thumb: td_inner_thumb {
             compatible = "zmk,behavior-tap-dance";
             #binding-cells = <0>;
             tapping-term-ms = <200>;
             bindings = <&mt LSHIFT TAB>, <&tog SYM>;
         };
-
-        rotate: rotate {
-            compatible = "zmk,behavior-sensor-rotate";
-            #sensor-binding-cells = <0>;
-            bindings = <&msc SCRL_UP>, <&msc SCRL_DOWN>;
-            tap-ms = <20>;
-        };
     };
 
     combos {
         compatible = "zmk,combos";
         global-quick-tap-ms = <75>;
-        combo_lang_eng { key-positions = <11 12>; bindings = <&kp LANGUAGE_2>; }; // S+D
-        combo_lang_jp  { key-positions = <18 19>; bindings = <&kp LANGUAGE_1>; }; // K+L
+        /* 2列目（中段）のキー位置：左から数えて S(11)+D(12) / K(18)+L(19) */
+        combo_lang_eng { key-positions = <11 12>; bindings = <&kp LANGUAGE_2>; }; 
+        combo_lang_jp  { key-positions = <18 19>; bindings = <&kp LANGUAGE_1>; }; 
     };
 
     keymap {
@@ -53,60 +45,41 @@
 
         default_layer {
             bindings = <
-&mt ESC Q      &kp W          &kp E          &kp R          &kp T                                                                    &kp Y          &kp U          &kp I          &kp O          &kp P
-&kp A          &kp S          &kp D          &kp F          &mt LEFT_WIN G &mkp RCLK                       &kp ESC          &kp H          &kp J          &kp K          &lt MOUSE L    &mt RCTRL MINUS
-&mt LSHIFT Z   &kp X          &kp C          &kp V          &kp B          &mkp MB1                        &kp DEL          &kp N          &kp M          &kp COMMA      &kp DOT        &kp RSHIFT
-/* 親指：左 [空, 空, 外:Space/NUM, 中:L-Click/Ctrl/Drag, 内:Tab/Shift/SYM, 空]  右 [内:BackSpace, 外:Enter/NUM, 空, 空, 空, 空] */
-&none          &none          &lt NUM SPACE  &td_ctrl_click &td_inner_thumb &none                          &kp BACKSPACE    &lt NUM ENTER  &none          &none          &none          &none
+/* 1列目 (上段：左右各5) */
+&kp Q      &kp W      &kp E      &kp R      &kp T                         &kp Y      &kp U      &kp I      &kp O      &kp P
+/* 2列目 (中段：左右各6) */
+&kp A      &kp S      &kp D      &kp F      &kp G      &mkp RCLK          &kp ESC    &kp H      &kp J      &kp K      &lt MOUSE L &kp RCTRL
+/* 3列目 (下段：左右各6) */
+&kp LSHIFT &kp Z      &kp X      &kp C      &kp V      &kp B              &kp DEL    &kp N      &kp M      &kp COMMA  &kp DOT    &kp RSHIFT
+/* 4列目 (左3[非親指] + 左親指3 + 右親指2 + 右1[非親指]) */
+&kp LCTRL  &kp LGUI   &kp LALT   &lt NUM SPACE &td_ctrl_click &td_inner_thumb   &kp BACKSPACE &lt NUM ENTER &kp DEL
             >;
-            sensor-bindings = <&rotate>;
         };
 
         NUM {
             bindings = <
-&kp SLASH      &kp N7         &kp N8         &kp N9         &kp MINUS                                                                &kp SLASH      &kp F2         &kp UP         &kp F4         &kp PG_UP
-&kp STAR       &kp N4         &kp N5         &kp N6         &kp PLUS       &trans                          &trans           &kp ASTERISK   &kp LEFT       &kp DOWN       &kp RIGHT      &kp PG_DN
-&trans         &kp N1         &kp N2         &kp N3         &kp PERIOD     &trans                          &trans           &trans         &kp F7         &kp N2         &kp F8         &kp PERIOD
-&none          &none          &trans         &trans         &trans         &none                           &trans           &trans         &none          &none          &none          &none
+&kp N1     &kp N2     &kp N3     &kp N4     &kp N5                        &kp N6     &kp N7     &kp N8     &kp N9     &kp N0
+&kp MINUS  &kp N4     &kp N5     &kp N6     &kp PLUS   &trans             &trans     &kp LEFT   &kp DOWN   &kp UP     &kp RIGHT  &trans
+&trans     &kp N1     &kp N2     &kp N3     &kp PERIOD &trans             &trans     &trans     &trans     &trans     &trans     &trans
+&trans     &trans     &trans     &trans     &trans     &trans             &trans     &trans     &trans
             >;
-            sensor-bindings = <&rotate>;
         };
 
         SYM {
             bindings = <
-&kp EXCL       &kp AT         &kp HASH       &kp DLLR       &kp PRCNT                                                                &kp CARET      &kp AMPS       &kp STAR       &kp LPAR       &kp RPAR
-&kp F1         &kp F2         &kp F3         &kp F4         &kp F5         &trans                          &trans           &kp F6         &kp F7         &kp F8         &kp F9         &kp F10
-&kp F11        &kp F12        &kp UNDER      &kp PIPE       &kp TILD       &trans                          &trans           &kp LBRC       &kp RBRC       &kp LT         &kp GT         &kp QMARK
-&none          &none          &trans         &trans         &trans         &none                           &trans           &trans         &none          &none          &none          &none
+&kp EXCL   &kp AT     &kp HASH   &kp DLLR   &kp PRCNT                     &kp CARET  &kp AMPS   &kp STAR   &kp LPAR   &kp RPAR
+&kp F1     &kp F2     &kp F3     &kp F4     &kp F5     &trans             &kp F6     &kp F7     &kp F8     &kp F9     &kp F10    &kp PIPE
+&kp F11    &kp F12    &kp UNDER  &kp PIPE   &kp TILD   &trans             &kp LBRC   &kp RBRC   &kp LT     &kp GT     &kp QMARK  &kp BSLH
+&trans     &trans     &trans     &trans     &trans     &trans             &trans     &trans     &trans
             >;
-            sensor-bindings = <&rotate>;
         };
 
         MOUSE {
             bindings = <
-&trans         &trans         &kp LC(PG_UP)  &kp LC(PG_DN)  &kp LG(R)                                                                &kp LG(R)      &kp LC(PG_UP)  &kp LC(PG_DN)  &trans         &trans
-&trans         &trans         &mkp MB1       &mkp MB2       &mkp MB3       &trans                          &trans           &mmv MOVE_LEFT &mmv MOVE_DOWN &mmv MOVE_UP   &mmv MOVE_RIGHT &trans
-&trans         &trans         &mkp MB4       &mkp MB5       &trans         &trans                          &trans           &msc SCRL_LEFT &msc SCRL_DOWN &msc SCRL_UP   &msc SCRL_RIGHT &trans
-&none          &none          &trans         &trans         &trans         &none                           &trans           &trans         &none          &none          &none          &none
-            >;
-            sensor-bindings = <&rotate>;
-        };
-
-        layer_5 {
-            bindings = <
-&trans         &trans         &trans         &trans         &trans                                                                   &trans         &trans         &trans         &trans         &trans
-&trans         &trans         &trans         &trans         &trans         &trans                          &trans           &trans         &trans         &trans         &trans         &trans
-&trans         &trans         &trans         &trans         &trans         &trans                          &trans           &trans         &trans         &trans         &trans         &trans
-&none          &none          &trans         &trans         &trans         &none                           &trans           &trans         &none          &none          &none          &none
-            >;
-        };
-
-        BT_LAYER {
-            bindings = <
-&trans         &trans         &trans         &trans         &trans                                                                   &bt BT_SEL 0   &bt BT_SEL 1   &bt BT_SEL 2   &bt BT_SEL 3   &bt BT_SEL 4
-&trans         &trans         &trans         &trans         &trans         &trans                          &trans           &trans         &trans         &trans         &trans         &trans
-&trans         &kp N1         &kp N2         &kp N3         &trans         &trans                          &trans           &trans         &trans         &trans         &trans         &bt BT_CLR
-&none          &none          &trans         &trans         &trans         &none                           &trans           &trans         &none          &none          &none          &none
+&bt BT_CLR &bt BT_SEL 0 &bt BT_SEL 1 &bt BT_SEL 2 &bt BT_SEL 3              &trans     &trans     &trans     &trans     &trans
+&trans     &trans     &trans     &trans     &trans     &trans             &trans     &mmv MOVE_LEFT &mmv MOVE_DOWN &mmv MOVE_UP &mmv MOVE_RIGHT &trans
+&trans     &trans     &trans     &trans     &trans     &trans             &trans     &msc SCRL_LEFT &msc SCRL_DOWN &msc SCRL_UP &msc SCRL_RIGHT &trans
+&trans     &trans     &trans     &trans     &trans     &trans             &trans     &trans     &trans
             >;
         };
     };
