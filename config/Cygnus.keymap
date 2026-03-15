@@ -11,33 +11,35 @@
 &mt {
     flavor = "balanced";
     tapping-term-ms = <200>;
+    quick-tap-ms = <0>;
 };
 
 / {
     behaviors {
-        /* 左親指・中央：タップ(左クリ) / 長押し(Ctrl) / 2タップホールド(ドラッグ) */
-        td_ctrl_click: td_ctrl_click {
-            compatible = "zmk,behavior-tap-dance";
-            #binding-cells = <0>;
+        /* 28番: タップで右クリック(RCLK)、長押しでShift */
+        mt_shift_rclk: mt_shift_rclk {
+            compatible = "zmk,behavior-hold-tap";
+            #binding-cells = <2>;
+            flavor = "tap-preferred";
             tapping-term-ms = <200>;
-            bindings = <&mt LCTRL MB1>, <&mkp MB1>;
+            bindings = <&kp>, <&mkp>;
         };
 
-        /* 左親指・内側：タップ(Tab) / 長押し(Shift) / 2タップ(SYMレイヤー固定) */
-        td_inner_thumb: td_inner_thumb {
+        /* 40番: タップでEsc、長押しでCtrl、2タップでSYMレイヤー固定 */
+        td_outer_ctrl: td_outer_ctrl {
             compatible = "zmk,behavior-tap-dance";
             #binding-cells = <0>;
             tapping-term-ms = <200>;
-            bindings = <&mt LSHIFT TAB>, <&tog SYM>;
+            bindings = <&mt LCTRL ESC>, <&tog SYM>;
         };
     };
 
     combos {
         compatible = "zmk,combos";
         global-quick-tap-ms = <75>;
-        /* 2列目(中段)：左から数えて S(11)+D(12) / K(18)+L(19) */
+        /* S(12)+D(13)で英数(無変換) / K(20)+L(21)でかな(変換) */
         combo_lang_eng { key-positions = <11 12>; bindings = <&kp LANGUAGE_2>; }; 
-        combo_lang_jp  { key-positions = <18 19>; bindings = <&kp LANGUAGE_1>; }; 
+        combo_lang_jp  { key-positions = <19 20>; bindings = <&kp LANGUAGE_1>; }; 
     };
 
     keymap {
@@ -45,41 +47,41 @@
 
         default_layer {
             bindings = <
-/* 1列目 (上段：左右5ずつの計10キー) */
-&kp Q      &kp W      &kp E      &kp R      &kp T                         &kp Y      &kp U      &kp I      &kp O      &kp P
-/* 2列目 (中段：左右6ずつの計12キー) */
-&kp A      &kp S      &kp D      &kp F      &kp G      &kp ESC            &kp ESC    &kp H      &kp J      &kp K      &lt MOUSE L &kp RCTRL
-/* 3列目 (下段：左右6ずつの計12キー) */
-&kp Z      &kp X      &kp C      &kp V      &kp B      &mkp RCLK          &kp DEL    &kp N      &kp M      &kp COMMA  &kp DOT    &kp SLASH
-/* 4列目 (計9キー：左端3つ[非親指] + 左親指3つ[外・中・内] + 右親指2つ[内・外] + 右端1つ[非親指]) */
-&kp LCTRL  &kp LGUI   &kp LALT   &lt NUM SPACE &td_ctrl_click &td_inner_thumb   &kp BACKSPACE &lt NUM ENTER &kp DEL
+/* --- 1列目 (上段) --- */
+/* 01 */ &kp Q,    /* 02 */ &kp W,    /* 03 */ &kp E,    /* 04 */ &kp R,    /* 05 */ &kp T,                         /* 06 */ &kp Y,    /* 07 */ &kp U,    /* 08 */ &kp I,    /* 09 */ &kp O,    /* 10 */ &kp P,
+/* --- 2列目 (中段) --- */
+/* 11 */ &kp A,    /* 12 */ &kp S,    /* 13 */ &kp D,    /* 14 */ &kp F,    /* 15 */ &kp G,    /* 16 */ &kp ESC,       /* 17 */ &kp ESC,  /* 18 */ &kp H,    /* 19 */ &kp J,    /* 20 */ &kp K,    /* 21 */ &lt MOUSE L, /* 22 */ &kp RCTRL,
+/* --- 3列目 (下段) --- */
+/* 23 */ &kp Z,    /* 24 */ &kp X,    /* 25 */ &kp C,    /* 26 */ &kp V,    /* 27 */ &kp B,    /* 28 */ &mt_shift_rclk LSHIFT RCLK, /* 29 */ &kp DEL,  /* 30 */ &kp N,    /* 31 */ &kp M,    /* 32 */ &kp COMMA, /* 33 */ &kp DOT,  /* 34 */ &kp RSHIFT,
+/* --- 4列目 (最下段) --- */
+/* 35 */ &kp LCTRL, /* 36 */ &kp LGUI, /* 37 */ &kp LALT, /* 38 */ &lt NUM TAB, /* 39 */ &mkp MB1, /* 40 */ &td_outer_ctrl, /* 41 */ &kp BACKSPACE, /* 42 */ &lt NUM ENTER, /* 43 */ &kp DEL
             >;
         };
 
         NUM {
             bindings = <
-&kp N1     &kp N2     &kp N3     &kp N4     &kp N5                        &kp N6     &kp N7     &kp N8     &kp N9     &kp N0
-&kp MINUS  &kp N4     &kp N5     &kp N6     &kp PLUS   &trans             &trans     &kp LEFT   &kp DOWN   &kp UP     &kp RIGHT  &trans
-&trans     &trans     &trans     &trans     &trans     &trans             &trans     &trans     &trans     &trans     &trans     &trans
-&trans     &trans     &trans     &trans     &trans     &trans             &trans     &trans     &trans
+/* 01-10 */ &kp N1,    &kp N2,    &kp N3,    &kp N4,    &kp N5,                      &kp N6,    &kp N7,    &kp N8,    &kp N9,    &kp N0,
+/* 11-22 */ &kp MINUS, &kp N4,    &kp N5,    &kp N6,    &kp ASTERISK, &trans,        &trans,    &kp LEFT,  &kp DOWN,  &kp UP,    &kp RIGHT, &trans,
+/* 23-34 */ &trans,    &kp N1,    &kp N2,    &kp N3,    &kp PERIOD,   &trans,        &trans,    &trans,    &trans,    &trans,    &trans,    &trans,
+/* 35-43 */ &trans,    &trans,    &trans,    &trans,    &trans,       &trans,        &trans,    &trans,    &trans
             >;
         };
 
         SYM {
             bindings = <
-&kp EXCL   &kp AT     &kp HASH   &kp DLLR   &kp PRCNT                     &kp CARET  &kp AMPS   &kp STAR   &kp LPAR   &kp RPAR
-&kp F1     &kp F2     &kp F3     &kp F4     &kp F5     &trans             &kp F6     &kp F7     &kp F8     &kp F9     &kp F10    &kp PIPE
-&kp F11    &kp F12    &kp UNDER  &kp PIPE   &kp TILD   &trans             &kp LBRC   &kp RBRC   &kp LT     &kp GT     &kp QMARK  &kp BSLH
-&trans     &trans     &trans     &trans     &trans     &trans             &trans     &trans     &trans
+/* 01-10 */ &kp EXCL,  &kp AT,    &kp HASH,  &kp DLLR,  &kp PRCNT,                   &kp CARET, &kp AMPS,  &kp STAR,  &kp LPAR,  &kp RPAR,
+/* 11-22 */ &kp F1,    &kp F2,    &kp F3,    &kp F4,    &kp F5,    &trans,           &kp F6,    &kp F7,    &kp F8,    &kp F9,    &kp F10,   &kp PIPE,
+/* 23-34 */ &kp F11,   &kp F12,   &kp UNDER, &kp PIPE,  &kp TILD,  &trans,           &kp LBRC,  &kp RBRC,  &kp LT,    &kp GT,    &kp QMARK, &kp BSLH,
+/* 35-43 */ &trans,    &trans,    &trans,    &trans,    &trans,    &trans,           &trans,    &trans,    &trans
             >;
         };
 
         MOUSE {
             bindings = <
-&bt BT_CLR &bt BT_SEL 0 &bt BT_SEL 1 &bt BT_SEL 2 &bt BT_SEL 3              &trans     &trans     &trans     &trans     &trans
-&trans     &trans     &trans     &trans     &trans     &trans             &trans     &mmv MOVE_LEFT &mmv MOVE_DOWN &mmv MOVE_UP &mmv MOVE_RIGHT &trans
-&trans     &trans     &trans     &trans     &trans     &trans             &trans     &msc SCRL_LEFT &msc SCRL_DOWN &msc SCRL_UP &msc SCRL_RIGHT &trans
-&trans     &trans     &trans     &trans     &trans     &trans             &trans     &trans     &trans
+/* 01-10 */ &bt BT_CLR, &bt BT_SEL 0, &bt BT_SEL 1, &bt BT_SEL 2, &bt BT_SEL 3,    &trans,    &trans,    &trans,    &trans,    &trans,
+/* 11-22 */ &trans,    &trans,    &trans,    &trans,    &trans,    &trans,           &trans,    &mmv MOVE_LEFT, &mmv MOVE_DOWN, &mmv MOVE_UP, &mmv MOVE_RIGHT, &trans,
+/* 23-34 */ &trans,    &trans,    &trans,    &trans,    &trans,    &trans,           &trans,    &msc SCRL_LEFT, &msc SCRL_DOWN, &msc SCRL_UP, &msc SCRL_RIGHT, &trans,
+/* 35-43 */ &trans,    &trans,    &trans,    &trans,    &trans,    &trans,           &trans,    &trans,    &trans
             >;
         };
     };
